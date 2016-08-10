@@ -15,8 +15,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class R2 {
 
 	String str제외수 = "";
-//	String str포함수 = "01,07,22"; // ex) : 01,07,22
-	String str포함수 = "";
+	String str포함수 = "01,07,22"; // ex) : 01,07,22
+//	String str포함수 = "";
 	String 추첨회차 = "714";	
 	int i로또게임갯수 = 9999999;
 	String str전회차당첨번호 = "";
