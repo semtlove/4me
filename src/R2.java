@@ -14,11 +14,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class R2 {
 
-//	String str제외수 = "";
-	String 추첨회차 = "707";
-	String str제외수 = "04,05,19,07,12,42,6,32,45";
-	int i로또게임갯수 = 10;
-	String str전회차당첨번호 = "01,07,22,33,37,40,20";
+	String str제외수 = "";
+//	String str포함수 = "01,07,22"; // ex) : 01,07,22
+	String str포함수 = "";
+	String 추첨회차 = "714";	
+	int i로또게임갯수 = 9999999;
+	String str전회차당첨번호 = "";
 	public static String[] dmOne = new String[10]; // 년 ,회차 ,추첨일 ,1 ,2 ,3 ,4 ,5 ,6 ,뽀너스
 	public static List arrOne = new ArrayList();
 
@@ -28,6 +29,7 @@ public class R2 {
 		oR2.start();
 	}
 
+	int i시도횟수 = 0;
 	public void start() {
 
 		int[] lottoNumbers = new int[6];
@@ -62,11 +64,19 @@ public class R2 {
 				dmRotto[inx] = dmRotto[inx].trim();
 				dmRotto[inx] = 한자리인경우앞에0을붙임(dmRotto[inx]);
 			}
+			
+			rotto = rotto.trim();
+			rotto = rotto.replaceAll(" ", "");
+			if ( rotto.equals("1,7,22,33,37,40") ) {
+				System.out.println("\n뽀숑~~~~~");
+			}
 
 			boolean ok = true;
 			
 			
-			ok = 번호사이차(dmRotto);
+//			ok = 번호사이차(dmRotto);
+//			if (ok == false) continue;			
+			ok = 포함수포함체크(dmRotto);
 			if (ok == false) continue;
 			ok = 특정번호대에서4개이하나옴(dmRotto);
 			if (ok == false) continue;
@@ -77,19 +87,38 @@ public class R2 {
 			ok = 전체합계체크(dmRotto);
 			if (ok == false) continue;
 			ok = 홀수짝수가5개쏠림이없는지체크(dmRotto);
-			if (ok == false) continue;
-			ok = 과거1등번호4개이상똑같은경우체크(dmRotto);
-			if (ok == false) continue;
+			if (ok == false) continue;			
 			ok = 뒷숫자가같은지체크(dmRotto);
 			if (ok == false) continue;
 			ok = 제외수포함체크(dmRotto);
 			if (ok == false) continue;
+			ok = 과거1등번호4개이상똑같은경우체크(dmRotto);
+			if (ok == false) continue;
 			
-			System.out.println(Arrays.toString(dmRotto));
+			if ( rotto.equals("1,7,22,33,37,40") ) {
+				System.out.println("i시도횟수 =" + i시도횟수);
+				System.out.println(Arrays.toString(dmRotto));
+				break;
+			}
+			else {
+				if ( i시도횟수 % 1000 == 0 ) {
+					System.out.print("->");
+					if ( i시도횟수 % 10000 == 0 ) {
+						System.out.println();
+					}
+				}
+			}
 			
+//			System.out.println(Arrays.toString(dmRotto));
+			
+			++i시도횟수;
 			--i로또게임갯수;
+			
+			
 
 		}
+		
+		System.out.println("------------------------------- END ----------------------------");
 	}
 	
 	
@@ -422,6 +451,10 @@ public class R2 {
 	public boolean 전회차에번호가1개or2개포함인치체크(String[] dmRotto) {
 		
 		boolean rValue = true;
+		
+		if ( str전회차당첨번호.length() <= 0 ) {
+			return rValue;
+		}
 
 		int i갯수 = 0;
 		for (int inx = 0; inx < dmRotto.length; inx++) {
@@ -493,10 +526,40 @@ public class R2 {
 	
 	
 	
+	public boolean 포함수포함체크(String[] dmRotto) {
+
+		boolean rValue = false;
+		
+		if ( str포함수.length() <= 0 ) {
+			return true;
+		}
+
+		int i포함수Cnt = str포함수.split(",").length;
+		int i포함수수수수숫Cnt = 0;
+		for (int inx = 0; inx < dmRotto.length; inx++) {
+
+			if (str포함수.indexOf(dmRotto[inx]) > -1) {
+				i포함수수수수숫Cnt ++;
+			}
+		}
+		
+		if ( i포함수Cnt == i포함수수수수숫Cnt ) {
+			rValue = true;
+		}
+
+		return rValue;
+	}
+	
+	
+	
 
 	public boolean 제외수포함체크(String[] dmRotto) {
 
 		boolean rValue = true;
+		
+		if ( str제외수.length() <= 0 ) {
+			return rValue;
+		}
 
 		for (int inx = 0; inx < dmRotto.length; inx++) {
 
