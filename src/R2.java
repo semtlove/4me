@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -14,11 +15,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class R2 {
 
-	String str제외수 = "";
-	String str포함수 = "01,07,22"; // ex) : 01,07,22
+	String str제외수 = "04,07,08,14,15,20,28,32,33,45"; // 포함수 or 추첨회차는 피해야 함.
+	String str포함수 = ""; // ex) : 01,07,22
 //	String str포함수 = "";
-	String 추첨회차 = "714";	
-	int i로또게임갯수 = 9999999;
+	String 추첨회차 = "716";	// ex) 714
+	int i로또게임갯수 = 5;
 	String str전회차당첨번호 = "";
 	public static String[] dmOne = new String[10]; // 년 ,회차 ,추첨일 ,1 ,2 ,3 ,4 ,5 ,6 ,뽀너스
 	public static List arrOne = new ArrayList();
@@ -26,17 +27,30 @@ public class R2 {
 	public static void main(String[] args) {
 
 		R2 oR2 = new R2();
-		oR2.start();
+		try {
+			oR2.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	int i시도횟수 = 0;
-	public void start() {
+	public void start() throws Exception {
 
 		int[] lottoNumbers = new int[6];
 		Random rnd = new Random();
 		
 		과거1등번호메모리load();
+		
+		if ( arrOne == null || arrOne.size() <= 5 ) {
+			throw new Exception("aaaaaaaa");
+		}
+		
+		//------------------------------------------ 분석 ----------------------------------------
 		과거1등분석_숫자사이차();
+		과거1등분석_전회차숫자가지수포함();
+		
 
 		while (i로또게임갯수 > 0) {
 
@@ -67,15 +81,15 @@ public class R2 {
 			
 			rotto = rotto.trim();
 			rotto = rotto.replaceAll(" ", "");
-			if ( rotto.equals("1,7,22,33,37,40") ) {
-				System.out.println("\n뽀숑~~~~~");
-			}
+//			if ( rotto.equals("2,7,27,33,41,44") ) {
+//				System.out.println("\n뽀숑~~~~~");
+//			}
 
 			boolean ok = true;
 			
 			
-//			ok = 번호사이차(dmRotto);
-//			if (ok == false) continue;			
+			ok = 번호사이차(dmRotto);
+			if (ok == false) continue;			
 			ok = 포함수포함체크(dmRotto);
 			if (ok == false) continue;
 			ok = 특정번호대에서4개이하나옴(dmRotto);
@@ -94,22 +108,24 @@ public class R2 {
 			if (ok == false) continue;
 			ok = 과거1등번호4개이상똑같은경우체크(dmRotto);
 			if (ok == false) continue;
+			ok = 체크전회차숫자가지수포함(dmRotto);
+			if (ok == false) continue;	
 			
-			if ( rotto.equals("1,7,22,33,37,40") ) {
-				System.out.println("i시도횟수 =" + i시도횟수);
-				System.out.println(Arrays.toString(dmRotto));
-				break;
-			}
-			else {
-				if ( i시도횟수 % 1000 == 0 ) {
-					System.out.print("->");
-					if ( i시도횟수 % 10000 == 0 ) {
-						System.out.println();
-					}
-				}
-			}
+//			if ( rotto.equals("2,7,27,33,41,44") ) {
+//				System.out.println("i시도횟수 =" + i시도횟수);
+//				System.out.println(Arrays.toString(dmRotto));
+//				break;
+//			}
+//			else {
+//				if ( i시도횟수 % 1000 == 0 ) {
+//					System.out.print("->");
+//					if ( i시도횟수 % 10000 == 0 ) {
+//						System.out.println();
+//					}
+//				}
+//			}
 			
-//			System.out.println(Arrays.toString(dmRotto));
+			System.out.println(Arrays.toString(dmRotto));
 			
 			++i시도횟수;
 			--i로또게임갯수;
@@ -217,6 +233,7 @@ public class R2 {
 						
 						arrOne.add(dmOne);
 						
+						
 						System.out.print("\n");
 					} // if
 				} // for(r)
@@ -225,6 +242,8 @@ public class R2 {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		Collections.reverse(arrOne);
 		
 	}
 	
@@ -266,42 +285,10 @@ public class R2 {
 					int iCnt = Integer.parseInt((String)hmHashMap.get(String.valueOf(i차)));
 					hmHashMap.put(String.valueOf(i차), String.valueOf(++iCnt));
 				}
-				
-//				if ( 회차 == 534 ) {
-//					System.out.println();
-//				}
-//				
-//				if ( i차 == 1) {
-//					i숫자사이1Cnt++;
-//				}
-//				else if ( i차 == 2) {
-//					i숫자사이2Cnt++;
-//				}
-//				else if ( i차 == 4) {
-//					i숫자사이4Cnt++;
-//				}
-//				else if ( i차 == 18) {
-//					i숫자사이18Cnt++;
-//				}
-//				else if ( i차 == 20) {
-//					i숫자사이20Cnt++;
-//				}
-//				else if ( i차 == 22) {
-//					i숫자사이22Cnt++;
-//				}
-//				else if ( i차 == 27) {
-//					i숫자사이27Cnt++;
-//				}
-//				else if ( i차 == 30) {
-//					i숫자사이30Cnt++;
-//				}
-//				else if ( i차 == 33) {
-//					i숫자사이33Cnt++;
-//				}
-				
+								
 				if ( i숫자사이차 < i차 ) {
 					i숫자사이차 = i차;
-					System.out.println("i숫자사이차 = " + i숫자사이차);					
+//					System.out.println("i숫자사이차 = " + i숫자사이차);					
 				}
 			}
 			
@@ -310,6 +297,113 @@ public class R2 {
 		System.out.println(hmHashMap);
 		
 	}
+	
+	
+	
+	
+	public void 과거1등분석_전회차숫자가지수포함() {
+		
+		String[] dm과거1등번호_전회차_분해 = null;
+		String str과거1등번호_전회차_분해 = "";
+		String[] dm과거1등번호_후회차 = null;
+		ArrayList arr분해숫자셋 = new ArrayList();
+		int iCnt = 0;
+		for (int inx=0; inx < arrOne.size()-1 ; inx++ ) {
+			dm과거1등번호_전회차_분해 = (String[])arrOne.get(inx);
+			
+			String strTmp = "";
+			str과거1등번호_전회차_분해 = "";
+			for (int idx=3; idx <= 9; idx++) {
+				
+				strTmp = dm과거1등번호_전회차_분해[idx].substring(0, 1);				
+				arr분해숫자셋.add(strTmp);
+				str과거1등번호_전회차_분해 += "§";
+				str과거1등번호_전회차_분해 += strTmp;
+				strTmp = dm과거1등번호_전회차_분해[idx].substring(1);		
+				arr분해숫자셋.add(strTmp);
+				str과거1등번호_전회차_분해 += "§";
+				str과거1등번호_전회차_분해 += strTmp;
+			}
+			
+			dm과거1등번호_후회차 = (String[])arrOne.get(inx+1);
+			strTmp = "";
+			iCnt=0;
+			for (int idx=3; idx <= 9; idx++) {
+				strTmp = dm과거1등번호_후회차[idx].substring(0, 1);			
+				if ( str과거1등번호_전회차_분해.indexOf(strTmp) > -1 ) {
+					iCnt++;
+				}
+				
+				strTmp = dm과거1등번호_후회차[idx].substring(1);			
+				if ( str과거1등번호_전회차_분해.indexOf(strTmp) > -1 ) {
+					iCnt++;
+				}
+			}
+			
+			
+			System.out.println(dm과거1등번호_후회차[1] + " | " + iCnt);
+			
+		}
+		
+	}
+	
+	
+	
+	
+	public boolean 체크전회차숫자가지수포함(String[] dmRotto) {
+		
+		boolean bRtnValue = true;
+		
+		String[] dm과거1등번호_전회차_분해 = null;
+		String str과거1등번호_전회차_분해 = "";
+		String[] dm과거1등번호_후회차 = null;
+		ArrayList arr분해숫자셋 = new ArrayList();
+		int iCnt = 0;
+		dm과거1등번호_전회차_분해 = (String[])arrOne.get(arrOne.size()-1);
+		
+		String strTmp = "";
+		str과거1등번호_전회차_분해 = "";
+		for (int idx=3; idx <= 9; idx++) {
+			
+			strTmp = dm과거1등번호_전회차_분해[idx].substring(0, 1);				
+			arr분해숫자셋.add(strTmp);
+			str과거1등번호_전회차_분해 += "§";
+			str과거1등번호_전회차_분해 += strTmp;
+			strTmp = dm과거1등번호_전회차_분해[idx].substring(1);		
+			arr분해숫자셋.add(strTmp);
+			str과거1등번호_전회차_분해 += "§";
+			str과거1등번호_전회차_분해 += strTmp;
+		}
+		
+		dm과거1등번호_후회차 = dmRotto;
+		strTmp = "";
+		iCnt=0;
+		for (int idx=0; idx < dmRotto.length; idx++) {
+			strTmp = dm과거1등번호_후회차[idx].substring(0, 1);			
+			if ( str과거1등번호_전회차_분해.indexOf(strTmp) > -1 ) {
+				iCnt++;
+			}
+			
+			strTmp = dm과거1등번호_후회차[idx].substring(1);			
+			if ( str과거1등번호_전회차_분해.indexOf(strTmp) > -1 ) {
+				iCnt++;
+			}
+		}
+		
+		
+		if ( iCnt <= 10 ) {
+			bRtnValue = false;
+		}
+		
+		
+		return bRtnValue;
+		
+	}
+	
+	
+	
+	
+	
 	
 	
 	public boolean 과거1등번호4개이상똑같은경우체크(String[] dmRotto) {
@@ -347,9 +441,6 @@ public class R2 {
 		
 		return bRtnValue;
 	}
-	
-	
-	
 	
 	public boolean 특정번호대에서4개이하나옴(String[] dmRotto) {
 		
@@ -401,7 +492,7 @@ public class R2 {
 			int i작은수 = Integer.parseInt(dmRotto[inx-1]);
 			i차 = i큰수 - i작은수;
 			
-			if ( i차  > 9 ) {
+			if ( i차  > 14 ) {
 				rValue = false;
 				break;
 			}
@@ -420,17 +511,26 @@ public class R2 {
 	public boolean 회차체크(String[] dmRotto) {
 		
 		boolean rValue = false;
+		
+		List lstTmp = new ArrayList(); // 회차 수가 2개 이상 포함 되었다면..
 
 		String sTmp = "";
 		for (int inx = 0; inx < dmRotto.length; inx++) {
 			sTmp = dmRotto[inx].substring(0, 1);
 			if ( "0".equals(sTmp) == false && 추첨회차.indexOf(sTmp) > -1 ) {
-				rValue = true;
-				break;
+				if ( lstTmp.contains(sTmp) == false) {
+					lstTmp.add(sTmp);
+				}
 			}
 			
 			sTmp = dmRotto[inx].substring(1);
 			if ( 추첨회차.indexOf(sTmp) > -1 ) {
+				if ( lstTmp.contains(sTmp) == false) {
+					lstTmp.add(sTmp);
+				}
+			}
+			
+			if (lstTmp.size() >= 2) {
 				rValue = true;
 				break;
 			}
