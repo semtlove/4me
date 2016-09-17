@@ -17,12 +17,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class R2 {
 
-	String str제외수 = ""; // 포함수 or 추첨회차는 피해야 함.
-	String str포함수 = ""; // ex) : 01,07,22
+	String str제외수 = "08,02,03,32"; // 포함수 or 추첨회차는 피해야 함.
+	String str포함수 = "05,15"; // ex) : 01,07,22
 //	String str포함수 = "";
-	String 추첨회차 = "717";	// ex) 714
+	String 추첨회차 = "720";	// ex) 714
 	int i로또게임갯수 = 5;
-	String str전회차당첨번호 = "02,06,13,16,29,30";
+	String str전회차당첨번호 = "04,08,13,19,20,43";
 	public static String[] dmOne = new String[10]; // 년 ,회차 ,추첨일 ,1 ,2 ,3 ,4 ,5 ,6 ,뽀너스
 	public static List arrOne = new ArrayList();
 
@@ -83,18 +83,30 @@ public class R2 {
 				dmRotto[inx] = 한자리인경우앞에0을붙임(dmRotto[inx]);
 			}
 			
-			rotto = rotto.trim();
-			rotto = rotto.replaceAll(" ", "");
-//			if ( rotto.equals("2,11,19,25,28,32") ) {
+			
+			
+//			dmRotto[0] = "04";
+//			dmRotto[1] = "11";
+//			dmRotto[2] = "20";
+//			dmRotto[3] = "23";
+//			dmRotto[4] = "32";
+//			dmRotto[5] = "39";
+//			
+//			rotto = rotto.trim();
+//			rotto = rotto.replaceAll(" ", "");
+//			if ( rotto.equals("4,11,20,23,32,39") ) {
 //				System.out.println("\n뽀숑~~~~~");
 //			}
 
 			boolean ok = true;
 			
 			
-			ok = 번호사이차(dmRotto);
-			if (ok == false) continue;			
+			
 			ok = 포함수포함체크(dmRotto);
+			if (ok == false) continue;
+			ok = 제외수포함체크(dmRotto);
+			if (ok == false) continue;
+			ok = 번호사이차(dmRotto);
 			if (ok == false) continue;
 			ok = 특정번호대에서4개이하나옴(dmRotto);
 			if (ok == false) continue;
@@ -108,13 +120,13 @@ public class R2 {
 			if (ok == false) continue;			
 			ok = 뒷숫자가같은지체크(dmRotto);
 			if (ok == false) continue;
-			ok = 제외수포함체크(dmRotto);
-			if (ok == false) continue;
 			ok = 체크전회차숫자가지수포함(dmRotto);
 			if (ok == false) continue;	
 			ok = 과거1등번호4개이상똑같은경우체크(dmRotto);
 			if (ok == false) continue;
 			ok = 체크_열분석(dmRotto);
+			if (ok == false) continue;
+			ok = 체크_행분석(dmRotto);
 			if (ok == false) continue;
 			
 			
@@ -535,6 +547,106 @@ System.out.println("------------------------------------끝---------------------
 	}
 	
 	
+
+	
+	public boolean 체크_행분석(String[] dmRotto) {
+		
+		boolean bRtnValue = false;
+		
+		String[][] dm과거1등행렬 = new String[8][8]; // 8 ,8인 이유는 0부터 안하기 위해..
+		
+		int iSuCnt = 0;
+
+		HashMap hmHashMap행 = null;
+		
+			hmHashMap행 = new HashMap();
+			for (int I숫자위치=0; I숫자위치 < dmRotto.length; I숫자위치++) {
+				
+				String str선택숫자 = dmRotto[I숫자위치];
+				int i선택숫자 = Integer.parseInt(str선택숫자);
+				
+//				System.out.println("i선택숫자=" + i선택숫자);
+				
+				iSuCnt = 0;
+				for (int i행X=1; i행X < dm과거1등행렬.length; i행X++) {
+					
+					for (int i열Y=1; i열Y < dm과거1등행렬[i행X].length; i열Y++) {	
+						
+						iSuCnt++;	
+						
+						if (i선택숫자 == iSuCnt) {
+							dm과거1등행렬[i행X][i열Y] = "*";
+							
+//							System.out.println("i행X=" + i행X);
+							if ( hmHashMap행.containsKey(String.valueOf(i행X)) == false ) {
+								
+								hmHashMap행.put(String.valueOf(1), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(2), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(3), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(4), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(5), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(6), String.valueOf(0));
+								hmHashMap행.put(String.valueOf(7), String.valueOf(0));
+								
+								hmHashMap행.put(String.valueOf(i행X), "1");
+							}
+							else {								
+								int iCnt = Integer.parseInt((String)hmHashMap행.get(String.valueOf(i행X)));
+								hmHashMap행.put(String.valueOf(i행X), String.valueOf(++iCnt));
+							}
+							
+						}
+						
+											
+					}
+					
+				}
+				
+			} // end of for (int I숫자위치=3; I숫자위치 <= 8; I숫자위치++)
+			
+//			System.out.println(str회차 + "|" +hmHashMap열 );
+			
+			int i1개총2or4개 = 0;
+			int i2개총2or1개 = 0;
+			
+			Set keys = hmHashMap행.keySet();;
+			Iterator oIterator = keys.iterator();
+			while(oIterator.hasNext()) {
+				String str행 = (String)oIterator.next();
+				String value = (String)hmHashMap행.get(str행);
+				
+				if ( Integer.parseInt(value) == 2 ) {
+					i2개총2or1개++;
+				}
+				
+				if ( Integer.parseInt(value) == 1 ) { 
+					i1개총2or4개++;
+				}
+				
+				
+			}
+			
+			if ( i1개총2or4개 == 3 && i2개총2or1개 == 0 ) {
+				bRtnValue = false;
+			}
+			else if ( i1개총2or4개 == 2 && i2개총2or1개 == 2 ) {
+				bRtnValue = true;
+			}
+			else if ( i1개총2or4개 == 4 && i2개총2or1개 == 1 ) {
+				bRtnValue = true;
+			}
+			else if ( i1개총2or4개 != 2 || i1개총2or4개 != 4  || i1개총2or4개 != 3 ) {
+				bRtnValue = true;
+			}
+			
+			
+			return bRtnValue;
+			
+		}
+				
+	
+	
+	
 	
 	
 	
@@ -605,11 +717,11 @@ System.out.println("------------------------------------끝---------------------
 				String 열 = (String)oIterator.next();
 				String value = (String)hmHashMap열.get(열);
 				
-				if ( Integer.parseInt(value) == 2 ) { // 한열에 2개 씩 총 2개
+				if ( Integer.parseInt(value) == 2 ) {
 					i2개총2or1개++;
 				}
 				
-				if ( Integer.parseInt(value) == 1 ) { // 한열에 1개 씩 총 2개
+				if ( Integer.parseInt(value) == 1 ) { 
 					i1개총2or4개++;
 				}
 				
@@ -914,7 +1026,7 @@ System.out.println("------------------------------------끝---------------------
 			}
 		}
 		
-		if ( i갯수 == 1 ) {
+		if ( 1 <= i갯수 && i갯수 <= 2 ) {
 			rValue = true;
 		}
 		else {
@@ -1045,7 +1157,7 @@ System.out.println("------------------------------------끝---------------------
 		if (i같은수 >= 3) {
 			rValue = false;
 		}
-		else if (i같은수 <= 2 ) {
+		else if ( 1 <= i같은수 && i같은수 <= 2 ) {
 			rValue = true;
 		}
 
