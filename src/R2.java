@@ -162,7 +162,7 @@ public class R2 {
 	
 	
 	
-	public void 과거1등번호메모리load() {
+	public List 과거1등번호메모리load() {
 		
 		
 		HSSFRow row;
@@ -267,6 +267,8 @@ public class R2 {
 		}
 		
 		Collections.reverse(arrOne);
+		
+		return arrOne;
 		
 	}
 	
