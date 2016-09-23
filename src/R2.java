@@ -17,6 +17,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class R2 {
 
+	String str추첨일 = "";
 	String str제외수 = "08,02,03,32"; // 포함수 or 추첨회차는 피해야 함.
 	String str포함수 = "05,15"; // ex) : 01,07,22
 //	String str포함수 = "";
@@ -55,6 +56,7 @@ public class R2 {
 		과거1등분석_첫숫자가10일때숫자분포분석();
 		과거1등분석_행분석();
 		과거1등분석_열분석();
+		과거1등분석_일자포함분석();
 
 		while (i로또게임갯수 > 0) {
 
@@ -102,6 +104,8 @@ public class R2 {
 			
 			
 			
+			ok = 체크_일자포함분석(dmRotto);
+			if (ok == false) continue;
 			ok = 포함수포함체크(dmRotto);
 			if (ok == false) continue;
 			ok = 제외수포함체크(dmRotto);
@@ -809,6 +813,121 @@ System.out.println("------------------------------------끝---------------------
 		}
 		
 	}
+	
+	
+	public void 과거1등분석_일자포함분석() {
+		
+		System.out.println("------------------------- 과거1등분석_일자포함분석 -------------------------");
+		
+		
+		String[] dm과거1등번호_회차별 = null;
+		String str과거1등번호_숫자_분해 = "";
+		ArrayList arr분해숫자셋 = new ArrayList();
+		String str일자 = "";
+		int iCnt = 0;
+		for (int inx=0; inx < arrOne.size()-1 ; inx++ ) {
+			dm과거1등번호_회차별 = (String[])arrOne.get(inx);
+			
+			String strTmp = "";
+			str과거1등번호_숫자_분해 = "";
+			for (int idx=3; idx <= 9; idx++) {
+				
+				strTmp = dm과거1등번호_회차별[idx].substring(0, 1);				
+				arr분해숫자셋.add(strTmp);
+				str과거1등번호_숫자_분해 += "§";
+				str과거1등번호_숫자_분해 += strTmp;
+				strTmp = dm과거1등번호_회차별[idx].substring(1);		
+				arr분해숫자셋.add(strTmp);
+				str과거1등번호_숫자_분해 += "§";
+				str과거1등번호_숫자_분해 += strTmp;
+			}
+			
+			str일자 = dm과거1등번호_회차별[2].split("\\.")[2];
+			strTmp = "";
+			iCnt=0;
+			strTmp = str일자.substring(0, 1);			
+			if ( str과거1등번호_숫자_분해.indexOf(strTmp) > -1 ) {
+				iCnt++;
+			}
+			
+			strTmp = str일자.substring(1);			
+			if ( str과거1등번호_숫자_분해.indexOf(strTmp) > -1 ) {
+				iCnt++;
+			}
+			
+//			if ( iCnt <= 0 ) {
+//				System.out.println(dm과거1등번호_회차별[2] + " | " + iCnt);
+//			}
+			
+				System.out.println(dm과거1등번호_회차별[2] + " | " 
+				+ dm과거1등번호_회차별[3] + " | " 
+				+ dm과거1등번호_회차별[4] + " | "
+				+ dm과거1등번호_회차별[5] + " | "
+				+ dm과거1등번호_회차별[6] + " | "
+				+ dm과거1등번호_회차별[7] + " | "
+				+ dm과거1등번호_회차별[8] + " | "
+				+ dm과거1등번호_회차별[9] + " | " + iCnt);
+			
+		}
+		
+		
+		System.out.println("------------------------- END 과거1등분석_일자포함분석 -------------------------");
+		
+	}
+	
+	
+	
+	
+	
+	public boolean 체크_일자포함분석(String[] dmRotto) {
+		
+		System.out.println("------------------------- 과거1등분석_일자포함 -------------------------");
+		
+		if ( str추첨일 == null || str추첨일.length() <= 0 ) {
+			return true; // skip
+		}
+		
+		boolean rValue = true;
+		
+		String str과거1등번호_숫자_분해 = "";
+		String str일자 = "";
+		int iCnt = 0;
+		
+		String strTmp = "";
+		str과거1등번호_숫자_분해 = "";
+		for (int idx=3; idx <= 9; idx++) {
+			
+			strTmp = dmRotto[idx].substring(0, 1);				
+			str과거1등번호_숫자_분해 += "§";
+			str과거1등번호_숫자_분해 += strTmp;
+			strTmp = dmRotto[idx].substring(1);		
+			str과거1등번호_숫자_분해 += "§";
+			str과거1등번호_숫자_분해 += strTmp;
+		}
+		
+		str일자 = str추첨일;
+		strTmp = "";
+		iCnt=0;
+		strTmp = str일자.substring(0, 1);			
+		if ( str과거1등번호_숫자_분해.indexOf(strTmp) > -1 ) {
+			iCnt++;
+		}
+		
+		strTmp = str일자.substring(1);			
+		if ( str과거1등번호_숫자_분해.indexOf(strTmp) > -1 ) {
+			iCnt++;
+		}
+		
+		if ( 1 <= iCnt && iCnt <= 2 ) {
+			rValue = true;
+		}
+		else {
+			rValue = false;
+		}
+			
+		return rValue;
+	}
+	
 	
 	
 	
