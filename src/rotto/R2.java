@@ -18,9 +18,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class R2 {
 
-	String str추첨일 = "";
-	String str제외수 = "08,02,03,32"; // 포함수 or 추첨회차는 피해야 함.
-	String str포함수 = "05,15"; // ex) : 01,07,22
+	String str추첨일 = "20";
+	String str제외수 = "05,15,18,20,22,23,24,25,31,32"; // 포함수 or 추첨회차는 피해야 함.
+	String str포함수 = "01,40"; // ex) : 01,07,22
 //	String str포함수 = "";
 	String 추첨회차 = "720";	// ex) 714
 	int i로또게임갯수 = 5;
@@ -114,7 +114,7 @@ public class R2 {
 			if (ok == false) continue;
 			ok = 체크_뒷숫자가같음(dmRotto); // 79%
 			if (ok == false) continue;
-			ok = 체크_일자포함(dmRotto);		// 83%			
+			ok = 체크_추첨일자포함(dmRotto);		// 83%			
 			if (ok == false) continue;
 			ok = 체크_홀수짝수가5개쏠림(dmRotto);	// 83% c
 			if (ok == false) continue;
@@ -930,7 +930,7 @@ System.out.println("------------------------------------끝---------------------
 	}
 	
 	
-	public boolean 체크_일자포함(String[] dmRotto) {
+	public boolean 체크_추첨일자포함(String[] dmRotto) {
 		
 		if ( str추첨일 == null || str추첨일.length() <= 0 ) {
 			return true; // skip
